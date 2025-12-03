@@ -1,0 +1,249 @@
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    /* Premium Subtle Gradient Background */
+    background: linear-gradient(to top, #dfe9f3 0%, white 100%);
+    background-attachment: fixed;
+    color: #1a1a1a;
+    overflow: hidden; /* App-like feel */
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+/* WinUI 3 Acrylic / Mica Material Simulation */
+.mica-effect {
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(125%);
+}
+
+.acrylic-panel {
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Range Slider Styling (WinUI style) */
+input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #0078d4; /* Windows Blue */
+    cursor: pointer;
+    margin-top: -6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: transform 0.1s;
+}
+
+input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: #e0e0e0;
+    border-radius: 2px;
+}
+
+input[type=range]:focus::-webkit-slider-runnable-track {
+    background: #ccc;
+}
+
+/* Utilities */
+.text-win-blue {
+    color: #0078d4;
+}
+
+.bg-win-blue {
+    background-color: #0078d4;
+}
+
+.hover-bg-subtle:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.active-bg-subtle:active {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.card-hover {
+    transition: all 0.2s ease;
+}
+.card-hover:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+}
+
+/* Loader */
+.loader {
+    border: 3px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 3px solid #0078d4;
+    width: 24px;
+    height: 24px;
+    -webkit-animation: spin 1s linear infinite; /* Safari */
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Lyric View */
+/* Marquee Animation */
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 10s linear infinite;
+    padding-right: 50px; /* Space for loop */
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes slideDownFade {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-down {
+    animation: slideDownFade 0.2s ease-out forwards;
+}
+
+.mask-image-gradient-bottom {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+}
+
+.lyric-line {
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s, color 0.4s;
+    opacity: 0.6;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+    transform: scale(1);
+    cursor: pointer;
+    /* Layout safety for scaling */
+    max-width: 80%; 
+    margin-left: auto; 
+    margin-right: auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    /* Performance */
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
+.lyric-line:hover {
+    opacity: 1;
+}
+
+.lyric-line.active {
+    opacity: 1;
+    color: #ffffff;
+    transform: scale(1.2); /* Reduced slightly from 1.3 to prevent edge clipping */
+    font-weight: 800;
+    /* text-shadow is expensive, consider removing if lag persists, but keeping for now */
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    margin: 20px auto; /* Ensure centering */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Reusable Component Classes (Refactoring) */
+
+/* Glassmorphism Surface */
+.winui-glass {
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(229, 231, 235, 0.5); /* gray-200 with opacity */
+}
+
+/* Icon Button */
+.btn-icon-base {
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon-base:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Primary Action Button */
+.btn-primary {
+    background-color: #0078d4;
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0063b1;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:active {
+    transform: scale(0.96);
+}
+
+/* Text Truncation */
+.text-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+
+@media (max-width: 768px) {
+    .mobile-controls-hidden {
+        display: none !important;
+    }
+}

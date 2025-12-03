@@ -1,0 +1,77 @@
+{
+    "name": "THW Music",
+    "short_name": "THW Music",
+    "id": "/",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "orientation": "any",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+    "description": "A WinUI-inspired web music player",
+    "lang": "zh-CN",
+    "dir": "ltr",
+    "categories": [
+        "music",
+        "entertainment",
+        "multimedia"
+    ],
+    "icons": [
+        {
+            "src": "icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "https://image.tianhw.top/avatar.webp",
+            "sizes": "1396x1396",
+            "type": "image/webp",
+            "form_factor": "wide",
+            "label": "Desktop View"
+        },
+        {
+            "src": "https://image.tianhw.top/avatar.webp",
+            "sizes": "1396x1396",
+            "type": "image/webp",
+            "form_factor": "narrow",
+            "label": "Mobile View"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "搜索",
+            "short_name": "搜索",
+            "description": "搜索歌曲",
+            "url": "./?action=search",
+            "icons": [
+                {
+                    "src": "icon-192.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "我的收藏",
+            "short_name": "收藏",
+            "description": "查看我的收藏",
+            "url": "./?action=favorites",
+            "icons": [
+                {
+                    "src": "icon-192.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        }
+    ]
+}
