@@ -87,8 +87,8 @@ export class ImporterManager {
 
         try {
             // 1. Get Playlist Tracks
-            // Using the URL provided by user: https://wyy.tianhw.top/playlist/track/all?id=...
-            const response = await fetch(`https://wyy.tianhw.top/playlist/track/all?id=${playlistId}`);
+            // Using the URL provided by user: https://163api.qijieya.cn/playlist/track/all?id=...
+            const response = await fetch(`https://163api.qijieya.cn/playlist/track/all?id=${playlistId}`);
             if (!response.ok) throw new Error('Network error');
             const data = await response.json();
             

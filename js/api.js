@@ -84,7 +84,7 @@ export const api = {
         if (apiCache.has(cacheKey)) return apiCache.get(cacheKey);
 
         try {
-            const response = await fetch('https://wyy.tianhw.top/top/playlist');
+            const response = await fetch('https://163api.qijieya.cn/top/playlist');
             if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
             if (data.code === 200) {
@@ -108,7 +108,7 @@ export const api = {
         if (apiCache.has(cacheKey)) return apiCache.get(cacheKey);
 
         try {
-            const response = await fetch(`https://wyy.tianhw.top/playlist/track/all?id=${id}`);
+            const response = await fetch(`https://163api.qijieya.cn/playlist/track/all?id=${id}`);
             if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
             if (data.code === 200) {
@@ -205,7 +205,7 @@ export const api = {
         if (apiCache.has(cacheKey)) return apiCache.get(cacheKey);
 
         try {
-            const response = await fetch('https://wyy.tianhw.top/top/playlist');
+            const response = await fetch('https://163api.qijieya.cn/top/playlist');
             if (!response.ok) throw new Error('Network response was not ok');
             let data = await response.json();
             if (data.code === 200) {
@@ -229,7 +229,7 @@ export const api = {
         if (apiCache.has(cacheKey)) return apiCache.get(cacheKey);
 
         try {
-            const response = await fetch(`https://wyy.tianhw.top/playlist/track/all?id=${id}`);
+            const response = await fetch(`https://163api.qijieya.cn/playlist/track/all?id=${id}`);
             if (!response.ok) throw new Error('Network response was not ok');
             let data = await response.json();
             if (data.code === 200) {
@@ -252,7 +252,7 @@ export const api = {
         if (apiCache.has(cacheKey)) return apiCache.get(cacheKey);
 
         try {
-            const response = await fetch('https://wyy.tianhw.top/search/hot/detail');
+            const response = await fetch('https://163api.qijieya.cn/search/hot/detail');
             if (!response.ok) throw new Error('Network response was not ok');
             let json = await response.json();
             let data = json.data || [];
@@ -273,7 +273,7 @@ export const api = {
         if (apiCache.has(cacheKey)) return apiCache.get(cacheKey);
 
         try {
-            const response = await fetch('https://wyy.tianhw.top/top/artists?limit=30');
+            const response = await fetch('https://163api.qijieya.cn/top/artists?limit=30');
             if (!response.ok) throw new Error('Network response was not ok');
             let json = await response.json();
             let data = json.artists || [];
@@ -294,7 +294,7 @@ export const api = {
     async getSearchSuggestions(keywords, signal = null) {
         if (!keywords) return null;
         try {
-            const response = await fetch(`https://wyy.tianhw.top/search/suggest?keywords=${encodeURIComponent(keywords)}`, { signal });
+            const response = await fetch(`https://163api.qijieya.cn/search/suggest?keywords=${encodeURIComponent(keywords)}`, { signal });
             if (!response.ok) throw new Error('Network response was not ok');
             let json = await response.json();
             if (json.code === 200 && json.result) {
@@ -316,7 +316,7 @@ export const api = {
         if (apiCache.has(cacheKey)) return apiCache.get(cacheKey);
 
         try {
-            const response = await fetch('https://wyy.tianhw.top/personalized/newsong');
+            const response = await fetch('https://163api.qijieya.cn/personalized/newsong');
             if (!response.ok) throw new Error('Network response was not ok');
             let json = await response.json();
             if (json.code === 200 && json.result) {
