@@ -1,0 +1,133 @@
+'use client'
+
+import { useUIStore } from '@/store/useUIStore'
+import { useAuthStore } from '@/store/useAuthStore'
+import { useFavoritesStore } from '@/store/useFavoritesStore'
+import { useEffect, useState } from 'react'
+import { clsx, type ClassValue } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
+export function Sidebar() {
+  const { isSidebarOpen, currentView, setCurrentView, toggleSidebar, setSidebarOpen } = useUIStore()
+  const { user, setLoginModalOpen, logout } = useAuthStore()
+  const { loadFavorites } = useFavoritesStore()
+  const [mounted, setMounted] = useState(false)
+
+  // Handle responsive sidebar behavior
+  useEffect(() => {
+    setMounted(true)
+    let lastWidth = window.innerWidth
+
+    const handleResize = () => {
+      const currentWidth = window.innerWidth
+      // Only act if crossing the 768px threshold
+      if (lastWidth >= 768 && currentWidth < 768) {
+        setSidebarOpen(false)
+      } else if (lastWidth < 768 && currentWidth >= 768) {
+        setSidebarOpen(true)
+      }
+      lastWidth = currentWidth
+    }
+
+    // Initial check
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [setSidebarOpen])
+
+  useEffect(() => {
+    if (user) {
+      loadFavorites()
+    }
+  }, [user, loadFavorites])
+
+  // Prevent hydration mismatch by returning null until mounted
+  if (!mounted) return null;
+
+  const navItems = [
+    { id: 'home', icon: 'ri-home-4-line', label: '首页', title: '首页' },
+    { id: 'playlists', icon: 'ri-play-list-fill', label: '歌单广场', title: '歌单广场' },
+    { id: 'favorites', icon: 'ri-heart-line', label: '我的收藏', title: '我的收藏' },
+  ] as const
+
+  return (
+    <>
+      {/* Mobile Sidebar Backdrop */}
+      <div 
+        className={cn(
+          "fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-opacity duration-300 md:hidden",
+          isSidebarOpen ? "block opacity-100" : "hidden opacity-0"
+        )}
+        onClick={toggleSidebar}
+      />
+
+      {/* Sidebar */}
+      <aside 
+        className={cn(
+          "flex flex-col bg-white/60 dark:bg-black/40 backdrop-blur-md border-r border-gray-200/60 dark:border-white/10 shadow-[4px_0_24px_rgba(0,0,0,0.02)] pt-4 px-2 z-50 transition-all duration-300 relative h-full shrink-0",
+          isSidebarOpen ? "w-64 translate-x-0" : "w-20 translate-x-0 md:translate-x-0 -translate-x-full md:w-20"
+        )}
+      >
+        <div className={cn(
+          "mb-8 px-2 flex items-center h-10 transition-all",
+          isSidebarOpen ? "gap-4 px-4" : "justify-center"
+        )}>
+          <button 
+            onClick={toggleSidebar}
+            className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 transition-colors"
+          >
+            <i className="ri-menu-line text-xl"></i>
+          </button>
+          {isSidebarOpen && (
+            <div className="flex items-center gap-3 overflow-hidden whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300">
+              <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-blue-500/30">
+                <i className="ri-music-fill"></i>
+              </div>
+              <h1 className="font-bold text-xl tracking-tight text-gray-900 dark:text-white">THW music</h1>
+            </div>
+          )}
+        </div>
+
+        <nav className="space-y-2 flex-1 px-3">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => {
+                setCurrentView(item.id)
+                if (window.innerWidth < 768) toggleSidebar()
+              }}
+              className={cn(
+                "w-full flex items-center rounded-2xl transition-all overflow-hidden whitespace-nowrap text-sm font-bold h-12 relative group",
+                isSidebarOpen ? "px-4 gap-4" : "justify-center",
+                currentView === item.id 
+                  ? "bg-blue-600 text-white shadow-xl shadow-blue-600/20" 
+                  : "hover:bg-gray-100 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+              )}
+              title={item.title}
+            >
+              <i className={cn(item.icon, "text-xl shrink-0 transition-transform group-hover:scale-110 duration-300")}></i>
+              {isSidebarOpen && <span className="animate-in fade-in slide-in-from-left-2 duration-200">{item.label}</span>}
+              
+              {!isSidebarOpen && currentView === item.id && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full"></div>
+              )}
+            </button>
+          ))}
+          
+          <div className="my-6 border-t border-gray-100 dark:border-white/5 mx-2"></div>
+        </nav>
+
+        <div className="mt-auto mb-6 px-2">
+          {/* Account UI removed from sidebar as requested */}
+        </div>
+      </aside>
+    </>
+  )
+}
