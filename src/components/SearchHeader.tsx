@@ -72,7 +72,7 @@ export function SearchHeader() {
       setIsLoadingSuggestions(true)
       try {
         const data = await api.search(localSearch, abortControllerRef.current.signal)
-        setSuggestions(data.slice(0, 8))
+        setSuggestions(data.slice(0, 6))
       } catch (err) {
         if ((err as Error).name !== 'AbortError') console.error(err)
       } finally {
@@ -138,7 +138,10 @@ export function SearchHeader() {
                       {suggestions.map((song, index) => (
                         <button
                           key={`${song.id}-${index}`}
-                          onClick={() => handleSearchSubmit(song.name)}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            handleSearchSubmit(song.name);
+                          }}
                           className="w-full flex items-center gap-4 px-6 py-3.5 hover:bg-blue-500/5 dark:hover:bg-white/5 transition-all text-left group"
                         >
                           <div className="relative w-12 h-12 shrink-0">
@@ -148,8 +151,8 @@ export function SearchHeader() {
                             </div>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="text-sm font-black text-gray-900 dark:text-gray-100 truncate group-hover:text-blue-600 transition-colors">{song.name}</div>
-                            <div className="text-xs text-gray-400 dark:text-gray-500 truncate mt-1 font-medium">{song.artist}</div>
+                            <div className="text-sm font-black text-gray-900 dark:text-gray-100 truncate group-hover:text-blue-600 transition-colors selection:bg-transparent">{song.name}</div>
+                            <div className="text-xs text-gray-400 dark:text-gray-500 truncate mt-1 font-medium selection:bg-transparent">{song.artist}</div>
                           </div>
                         </button>
                       ))}
@@ -174,13 +177,16 @@ export function SearchHeader() {
                       {hotSearch.map((item, index) => (
                         <button
                           key={index}
-                          onClick={() => handleSearchSubmit(item.searchWord)}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            handleSearchSubmit(item.searchWord);
+                          }}
                           className="flex items-center gap-4 px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/5 rounded-2xl transition-all text-left group"
                         >
                           <span className={`text-sm font-black italic w-6 text-center ${index < 3 ? 'text-blue-600' : 'text-gray-300 dark:text-gray-700'}`}>
                             {(index + 1).toString().padStart(2, '0')}
                           </span>
-                          <span className="text-sm text-gray-700 dark:text-gray-300 font-bold group-hover:text-blue-600 truncate">{item.searchWord}</span>
+                          <span className="text-sm text-gray-700 dark:text-gray-300 font-bold group-hover:text-blue-600 truncate selection:bg-transparent">{item.searchWord}</span>
                           {item.iconType === 1 && <span className="text-[8px] font-black bg-red-500 text-white px-1 rounded">HOT</span>}
                         </button>
                       ))}

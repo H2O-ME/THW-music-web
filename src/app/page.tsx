@@ -458,9 +458,9 @@ export default function Home() {
         }
         return (
           <div className="animate-in fade-in duration-700">
-            <div className="flex items-center justify-between mb-10">
+            <div className="flex items-center justify-between mb-4 md:mb-5">
               <h2 className="text-3xl font-black text-gray-900 dark:text-white flex items-center gap-4">
-                <div className="w-12 h-12 bg-red-50 dark:bg-red-900/20 rounded-2xl flex items-center justify-center">
+                <div className="w-10 h-10 md:w-12 md:h-12 bg-red-50 dark:bg-red-900/20 rounded-2xl flex items-center justify-center">
                   <i className="ri-heart-3-fill text-red-500"></i>
                 </div>
                 我的收藏
@@ -468,7 +468,7 @@ export default function Home() {
               <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">{favoriteSongs.length} 首珍藏曲目</div>
             </div>
             
-            <div className="space-y-1 bg-white/30 dark:bg-black/10 rounded-[2rem] md:rounded-[2.5rem] p-2 md:p-6 backdrop-blur-sm border border-white/40 dark:border-white/5 shadow-sm">
+            <div className="space-y-1 bg-white/30 dark:bg-black/10 rounded-[2rem] md:rounded-[2.5rem] p-2 md:p-3 backdrop-blur-sm border border-white/40 dark:border-white/5 shadow-sm">
               <div className="grid grid-cols-[32px_1fr_48px] md:grid-cols-[48px_1fr_200px_80px] gap-4 px-4 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100/50 dark:border-white/5 mb-4">
                 <div className="text-center">#</div>
                 <div>标题 / 歌手</div>

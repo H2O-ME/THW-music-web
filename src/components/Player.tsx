@@ -165,10 +165,6 @@ export function Player() {
     setDragValue(currentTime)
   }
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setVolume(parseFloat(e.target.value))
-  }
-
   const togglePiP = async () => {
     if (!currentSong) return
 
@@ -307,7 +303,7 @@ export function Player() {
 
   return (
     <div className={cn(
-      "fixed left-0 right-0 md:left-6 md:right-6 z-[100] perspective-[1000px] group/player px-2 pb-2 md:p-0 transition-all duration-500",
+      "fixed left-0 right-0 md:left-6 md:right-6 z-[100] perspective-[1000px] group/player px-2 pb-2 md:p-0 transition-all duration-700",
       isLyricViewOpen ? "bottom-0 md:bottom-6" : "bottom-[72px] md:bottom-6",
       !hasSong && "translate-y-[200%] opacity-0 pointer-events-none"
     )}>
@@ -320,8 +316,10 @@ export function Player() {
       )}
 
       <div className={cn(
-        "relative h-20 md:h-24 bg-white/70 dark:bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-3xl md:rounded-[2.5rem] px-4 md:px-6 flex items-center justify-between transition-all duration-500 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.2)] md:hover:-translate-y-1 hover:bg-white/80 dark:hover:bg-[#0a0a0b]/80",
-        isLyricViewOpen ? "z-[150] bg-[#0a0a0b]/80 text-white ring-1 ring-white/10 border-white/5" : "z-50 text-gray-900 dark:text-white"
+        "relative h-20 md:h-24 bg-white/70 dark:bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/20 dark:border-white/10 flex items-center justify-between transition-all duration-700 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.2)] md:hover:-translate-y-1 hover:bg-white/80 dark:hover:bg-[#0a0a0b]/80 overflow-hidden",
+        isLyricViewOpen 
+          ? "z-[150] bg-[#0a0a0b]/80 text-white ring-1 ring-white/10 border-white/5 rounded-3xl md:rounded-[2.5rem] px-4 md:px-6 w-full" 
+          : "z-50 text-gray-900 dark:text-white rounded-full w-20 md:w-24 mx-auto md:hover:w-full md:hover:rounded-[2.5rem] px-4 md:px-6 transition-[width,border-radius] delay-150 duration-500 ease-in-out"
       )}>
         <audio
           ref={audioRef}
@@ -337,7 +335,10 @@ export function Player() {
         />
 
         {/* Song Info */}
-        <div className="flex items-center gap-3 md:gap-5 flex-1 md:w-1/3 min-w-0">
+        <div className={cn(
+          "flex items-center gap-3 md:gap-5 flex-1 md:w-1/3 min-w-0 transition-opacity duration-300",
+          !isLyricViewOpen && "opacity-0 group-hover/player:opacity-100"
+        )}>
           <div 
             className="relative group cursor-pointer shrink-0"
             onClick={() => currentSong && setIsLyricViewOpen(!isLyricViewOpen)}
@@ -372,16 +373,20 @@ export function Player() {
         </div>
 
         {/* Controls */}
-        <div className="flex flex-col items-center justify-center gap-0 md:gap-1 flex-1 md:w-1/3">
+        <div className="flex flex-col items-center justify-center gap-0 md:gap-1 shrink-0 z-10">
           <div className="flex items-center gap-4 md:gap-8 mb-0 md:mb-1">
-            <button onClick={prevSong} disabled={!currentSong} className={cn("transition-all active:scale-90 disabled:opacity-30 hidden md:block", isLyricViewOpen ? "text-white/80 hover:text-white" : "text-gray-400 hover:text-blue-600")}>
+            <button onClick={prevSong} disabled={!currentSong} className={cn(
+              "transition-all active:scale-90 disabled:opacity-30 hidden md:block", 
+              isLyricViewOpen ? "text-white/80 hover:text-white" : "text-gray-400 hover:text-blue-600",
+              !isLyricViewOpen && "w-0 overflow-hidden opacity-0 group-hover/player:w-auto group-hover/player:opacity-100"
+            )}>
               <i className="ri-skip-back-fill text-2xl"></i>
             </button>
             <button 
               onClick={() => currentSong && setIsPlaying(!isPlaying)}
               disabled={!currentSong}
               className={cn(
-                "w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all active:scale-95 disabled:opacity-50 shadow-xl", 
+                "w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all active:scale-95 disabled:opacity-50 shadow-xl shrink-0", 
                 isLyricViewOpen 
                   ? "bg-white text-black hover:scale-105" 
                   : "bg-blue-600 text-white hover:bg-blue-700 hover:scale-105 shadow-blue-600/30"
@@ -393,13 +398,20 @@ export function Player() {
                 <i className={cn(isPlaying ? "ri-pause-fill" : "ri-play-fill", "text-xl md:text-2xl ml-0.5")}></i>
               )}
             </button>
-            <button onClick={nextSong} disabled={!currentSong} className={cn("transition-all active:scale-90 disabled:opacity-30", isLyricViewOpen ? "text-white/80 hover:text-white" : "text-gray-400 hover:text-blue-600")}>
+            <button onClick={nextSong} disabled={!currentSong} className={cn(
+              "transition-all active:scale-90 disabled:opacity-30", 
+              isLyricViewOpen ? "text-white/80 hover:text-white" : "text-gray-400 hover:text-blue-600",
+              !isLyricViewOpen && "w-0 overflow-hidden opacity-0 group-hover/player:w-auto group-hover/player:opacity-100"
+            )}>
               <i className="ri-skip-forward-fill text-xl md:text-2xl"></i>
             </button>
           </div>
           
           {/* Progress Bar */}
-          <div className="w-full max-w-[240px] flex items-center gap-2 group/progress relative">
+          <div className={cn(
+            "w-full max-w-[240px] flex items-center gap-2 group/progress relative transition-all duration-300",
+            !isLyricViewOpen && "opacity-0 h-0 group-hover/player:opacity-100 group-hover/player:h-auto"
+          )}>
             <span className={cn("text-[9px] font-black w-8 text-right tabular-nums transition-colors hidden md:block", isLyricViewOpen ? "text-white/40" : "text-gray-300 dark:text-gray-600 group-hover/progress:text-blue-500")}>
               {formatTime(displayTime)}
             </span>
@@ -430,7 +442,10 @@ export function Player() {
         </div>
 
         {/* Extra Controls */}
-        <div className="flex items-center justify-end gap-2 md:gap-3 flex-1 md:w-1/3">
+        <div className={cn(
+          "flex items-center justify-end gap-2 md:gap-3 flex-1 md:w-1/3 transition-opacity duration-300",
+          !isLyricViewOpen && "opacity-0 group-hover/player:opacity-100"
+        )}>
           <button 
             onClick={() => currentSong && toggleFavorite(currentSong)}
             disabled={!currentSong}
@@ -465,21 +480,6 @@ export function Player() {
           >
             <i className="ri-article-line text-lg md:text-xl"></i>
           </button>
-          
-          <div className="w-10 h-10 rounded-full hidden md:flex items-center justify-center hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer group relative">
-             <i className={cn("text-xl", volume === 0 ? "ri-volume-mute-line" : volume < 0.5 ? "ri-volume-down-line" : "ri-volume-up-line")}></i>
-             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-8 h-32 bg-white dark:bg-[#0a0a0b] rounded-full shadow-xl border border-gray-100 dark:border-white/10 hidden group-hover:flex items-center justify-center py-4 animate-in fade-in zoom-in-95 duration-200">
-               <input 
-                 type="range" 
-                 min="0" 
-                 max="1" 
-                 step="0.01" 
-                 value={volume}
-                 onChange={handleVolumeChange}
-                 className="h-24 -rotate-90 w-1 accent-blue-600"
-               />
-             </div>
-          </div>
         </div>
       </div>
     </div>
