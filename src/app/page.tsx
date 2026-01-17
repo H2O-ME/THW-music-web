@@ -228,7 +228,7 @@ export default function Home() {
           <div className="animate-in fade-in duration-700 space-y-16 pb-12">
             
             {/* Hero Section - Refactored */}
-            <section className="relative h-[300px] md:h-[400px] rounded-[2rem] md:rounded-[2.5rem] overflow-hidden group shadow-[0_20px_50px_rgba(0,0,0,0.2)] transition-all duration-500 hover:shadow-[0_30px_60px_rgba(0,0,0,0.3)] mx-2 md:mx-0">
+            <section className="relative h-[240px] md:h-[320px] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group shadow-[0_20px_50px_rgba(0,0,0,0.15)] transition-all duration-500 hover:shadow-[0_30px_60px_rgba(0,0,0,0.25)] mx-2 md:mx-0">
               <div className="absolute inset-0 z-0">
                 <img 
                   src={newSongs[0]?.picUrl || topPlaylists[0]?.coverImgUrl || "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=2070&auto=format&fit=crop"} 
@@ -238,51 +238,51 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent backdrop-blur-[2px]"></div>
               </div>
               
-              <div className="relative h-full flex flex-col justify-center px-6 md:px-16 z-10">
-                <div className="flex items-center gap-3 mb-4 md:mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
-                  <span className="w-8 md:w-12 h-[3px] bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]"></span>
+              <div className="relative h-full flex flex-col justify-center px-6 md:px-12 z-10">
+                <div className="flex items-center gap-2 mb-3 md:mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+                  <span className="w-6 md:w-8 h-[2px] bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]"></span>
                   <span className="text-blue-400 text-[10px] md:text-xs font-black uppercase tracking-[0.4em] drop-shadow-md">今日首发</span>
                 </div>
                 
-                <h2 className="text-3xl md:text-7xl font-black text-white mb-6 md:mb-8 leading-tight md:leading-none max-w-4xl tracking-tighter drop-shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+                <h2 className="text-2xl md:text-5xl font-black text-white mb-4 md:mb-6 leading-tight md:leading-none max-w-3xl tracking-tighter drop-shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
                   {newSongs[0]?.name || hotSearch[0]?.searchWord || "探索无界音乐"}
                 </h2>
                 
-                <div className="flex flex-wrap items-center gap-4 md:gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                <div className="flex flex-wrap items-center gap-3 md:gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
                   <button 
                     onClick={() => newSongs[0] && handlePlayNewSong(newSongs[0])}
-                    className="group relative px-6 md:px-10 py-3 md:py-5 bg-white text-black rounded-full font-black text-xs md:text-sm hover:scale-105 transition-all active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.3)] overflow-hidden"
+                    className="group relative px-5 md:px-8 py-2.5 md:py-4 bg-white text-black rounded-full font-black text-[10px] md:text-xs hover:scale-105 transition-all active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.2)] overflow-hidden"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-white opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <span className="relative flex items-center gap-2 md:gap-3">
-                      <i className="ri-play-fill text-xl md:text-2xl"></i>
+                      <i className="ri-play-fill text-lg md:text-xl"></i>
                       立即播放
                     </span>
                   </button>
                   
-                  <div className="flex items-center gap-3 md:gap-4">
-                     <button className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 hover:scale-110 transition-all active:scale-95 group">
-                        <i className="ri-heart-line text-lg md:text-2xl group-hover:text-red-500 transition-colors"></i>
+                  <div className="flex items-center gap-2 md:gap-3">
+                     <button className="w-9 h-9 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 hover:scale-110 transition-all active:scale-95 group">
+                        <i className="ri-heart-line text-base md:text-xl group-hover:text-red-500 transition-colors"></i>
                      </button>
-                     <button className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 hover:scale-110 transition-all active:scale-95">
-                        <i className="ri-share-forward-line text-lg md:text-2xl"></i>
+                     <button className="w-9 h-9 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 hover:scale-110 transition-all active:scale-95">
+                        <i className="ri-share-forward-line text-base md:text-xl"></i>
                      </button>
                   </div>
                 </div>
               </div>
 
               {/* Decorative Glass Cards */}
-              <div className="absolute bottom-12 right-12 hidden lg:flex gap-4">
+              <div className="absolute bottom-8 right-8 hidden lg:flex gap-3">
                 {newSongs.slice(1, 4).map((item, i) => (
                    <div 
                     key={item.id}
-                    className="w-48 p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 flex items-center gap-3 hover:bg-black/60 transition-colors cursor-pointer group"
+                    className="w-40 p-2.5 rounded-xl bg-black/40 backdrop-blur-xl border border-white/10 flex items-center gap-2.5 hover:bg-black/60 transition-colors cursor-pointer group"
                     onClick={() => handlePlayNewSong(item)}
                    >
-                     <img src={item.picUrl} className="w-10 h-10 rounded-lg object-cover grayscale group-hover:grayscale-0 transition-all" alt="" />
+                     <img src={item.picUrl} className="w-8 h-8 rounded-lg object-cover grayscale group-hover:grayscale-0 transition-all" alt="" />
                      <div className="min-w-0">
-                       <p className="text-white text-xs font-bold truncate group-hover:text-blue-400 transition-colors">{item.name}</p>
-                       <p className="text-white/40 text-[10px] truncate">{item.song.artists[0].name}</p>
+                       <p className="text-white text-[10px] font-bold truncate group-hover:text-blue-400 transition-colors">{item.name}</p>
+                       <p className="text-white/40 text-[9px] truncate">{item.song.artists[0].name}</p>
                      </div>
                    </div>
                 ))}

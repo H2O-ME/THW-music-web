@@ -71,8 +71,9 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside 
         className={cn(
-          "flex flex-col bg-white/60 dark:bg-black/40 backdrop-blur-md border-r border-gray-200/60 dark:border-white/10 shadow-[4px_0_24px_rgba(0,0,0,0.02)] pt-4 px-2 z-50 transition-all duration-300 relative h-full shrink-0",
-          isSidebarOpen ? "w-64 translate-x-0" : "w-20 translate-x-0 md:translate-x-0 -translate-x-full md:w-20"
+          "flex flex-col bg-white/60 dark:bg-black/40 backdrop-blur-md border-r border-gray-200/60 dark:border-white/10 shadow-[4px_0_24px_rgba(0,0,0,0.02)] pt-4 px-2 z-50 transition-all duration-300 h-full shrink-0",
+          "fixed md:relative",
+          isSidebarOpen ? "w-64 translate-x-0" : "w-0 md:w-20 -translate-x-full md:translate-x-0"
         )}
       >
         <div className={cn(

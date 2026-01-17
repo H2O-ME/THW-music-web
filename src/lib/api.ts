@@ -17,7 +17,8 @@ export async function fetchWithTimeout(resource: string, options: RequestInit & 
     clearTimeout(id);
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text().catch(() => 'Unknown error');
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
     }
     
     return await response.json();
@@ -37,24 +38,44 @@ export const api = {
   getNewSongs: (signal?: AbortSignal) => fetchWithTimeout(`${API_BASE}/personalized/newsong`, { signal }),
   
   search: async (keyword: string, signal?: AbortSignal) => {
-    const data = await fetchWithTimeout(`${METING_API}?server=netease&type=search&id=${encodeURIComponent(keyword)}`, { signal });
-    return (data || []).map((song: any) => ({
-      ...song,
-      id: song.id || (song.url ? song.url.match(/[?&]id=(\d+)/)?.[1] : null) || Math.random().toString(36).substr(2, 9),
-      name: song.title || song.name,
-      artist: song.author || song.artist,
-      album: song.album || ''
-    }));
+    try {
+      const data = await fetchWithTimeout(`${METING_API}?server=netease&type=search&id=${encodeURIComponent(keyword)}`, { signal });
+      if (!Array.isArray(data)) {
+        console.error('Search API returned non-array data:', data);
+        return [];
+      }
+      return data.map((song: any) => ({
+        ...song,
+        id: song.id || (song.url ? song.url.match(/[?&]id=(\d+)/)?.[1] : null) || Math.random().toString(36).substr(2, 9),
+        name: song.title || song.name,
+        artist: song.author || song.artist,
+        album: song.album || ''
+      }));
+    } catch (err) {
+      if ((err as Error).name === 'AbortError') throw err;
+      console.error('Search error:', err);
+      return [];
+    }
   },
   
   getPlaylistTracks: async (id: string, signal?: AbortSignal) => {
-    const data = await fetchWithTimeout(`${METING_API}?server=netease&type=playlist&id=${id}`, { signal });
-    return (data || []).map((song: any) => ({
-      ...song,
-      id: song.id || (song.url ? song.url.match(/[?&]id=(\d+)/)?.[1] : null) || Math.random().toString(36).substr(2, 9),
-      name: song.title || song.name,
-      artist: song.author || song.artist,
-      album: song.album || ''
-    }));
+    try {
+      const data = await fetchWithTimeout(`${METING_API}?server=netease&type=playlist&id=${id}`, { signal });
+      if (!Array.isArray(data)) {
+        console.error('Playlist tracks API returned non-array data:', data);
+        return [];
+      }
+      return data.map((song: any) => ({
+        ...song,
+        id: song.id || (song.url ? song.url.match(/[?&]id=(\d+)/)?.[1] : null) || Math.random().toString(36).substr(2, 9),
+        name: song.title || song.name,
+        artist: song.author || song.artist,
+        album: song.album || ''
+      }));
+    } catch (err) {
+      if ((err as Error).name === 'AbortError') throw err;
+      console.error('Fetch playlist tracks error:', err);
+      return [];
+    }
   },
 };
