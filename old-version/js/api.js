@@ -1,10 +1,10 @@
-let API_BASE = 'https://meting.tianhw.top/api';
+let API_BASE = 'https://meting.elysium-stack.cn/api';
 const SERVER = 'netease'; // 强制使用网易云音乐
 
 // Helper to replace domain
 const fixDomain = (str) => {
     if (typeof str === 'string') {
-        let result = str.replace(/meting\.elysium-stack\.cn/g, 'meting.tianhw.top');
+        let result = str.replace(/meting\.elysium-stack\.cn/g, 'meting.elysium-stack.cn');
         // Force HTTPS for 126.net music domains (p1, p2, p3, p4, etc.)
         result = result.replace(/http:\/\/(p\d+\.music\.126\.net)/g, 'https://$1');
         return result;

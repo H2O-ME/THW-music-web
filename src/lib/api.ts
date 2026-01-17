@@ -28,7 +28,7 @@ export async function fetchWithTimeout(resource: string, options: RequestInit & 
 }
 
 export const API_BASE = 'https://163api.qijieya.cn';
-export const METING_API = 'https://meting.tianhw.top/api';
+export const METING_API = 'https://meting.elysium-stack.cn/api';
 
 export const api = {
   getHotSearch: (signal?: AbortSignal) => fetchWithTimeout(`${API_BASE}/search/hot/detail`, { signal }),
