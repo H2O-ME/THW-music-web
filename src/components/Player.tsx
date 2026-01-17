@@ -298,13 +298,20 @@ export function Player() {
 
   return (
     <div className={cn(
-      "fixed left-0 right-0 md:left-6 md:right-6 z-[200] perspective-[1000px] group/player px-2 pb-2 md:p-0 transition-all duration-700",
+      "fixed left-0 right-0 md:left-6 md:right-6 z-[200] perspective-[1000px] group/player px-2 pb-2 md:p-0 transition-all duration-700 ease-in-out",
       isLyricViewOpen ? "bottom-0 md:bottom-6" : "bottom-[72px] md:bottom-6",
-      !hasSong && "translate-y-[200%] opacity-0 pointer-events-none"
+      !hasSong ? "translate-y-[200%] opacity-0 pointer-events-none" : (
+        isPlaying 
+          ? "translate-y-0" 
+          : "translate-y-[calc(100%-32px)] hover:translate-y-0"
+      )
     )}>
       {/* Diffraction Background */}
       {currentSong && !isLyricViewOpen && (
-        <div className="absolute inset-4 z-0 rounded-3xl opacity-40 blur-[40px] transition-all duration-1000 animate-pulse-slow pointer-events-none hidden md:block">
+        <div className={cn(
+          "absolute inset-4 z-0 rounded-3xl opacity-40 blur-[40px] transition-all duration-1000 animate-pulse-slow pointer-events-none hidden md:block",
+          !isPlaying && "opacity-0 group-hover/player:opacity-40"
+        )}>
           <div className="absolute inset-0 bg-cover bg-center opacity-70" style={{ backgroundImage: `url(${currentSong.pic})` }}></div>
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 mix-blend-overlay"></div>
         </div>
@@ -314,7 +321,7 @@ export function Player() {
         "relative h-20 md:h-24 bg-white/80 dark:bg-[#0a0a0b]/80 backdrop-blur-2xl border border-white/20 dark:border-white/10 flex items-center justify-between transition-all duration-500 shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden",
         isLyricViewOpen 
           ? "bg-[#0a0a0b]/80 text-white ring-1 ring-white/10 border-white/5 rounded-3xl md:rounded-[2.5rem] px-4 md:px-6 w-full" 
-          : "text-gray-900 dark:text-white rounded-3xl md:rounded-[2rem] w-full px-4 md:px-8"
+          : "text-gray-900 dark:text-white rounded-3xl md:rounded-[2rem] w-full px-4 md:px-8 cursor-pointer"
       )}>
         <audio
           ref={audioRef}
