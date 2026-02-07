@@ -116,8 +116,10 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
           favoriteSongs: [song, ...get().favoriteSongs]
         })
       }
-    } catch (err) {
-      console.error('Failed to toggle favorite:', err)
+    } catch (err: any) {
+      console.error('Failed to toggle favorite:', err?.message || err || 'Unknown error');
+      // 可选：如果是因为网络导致的失败，可以在这里打印更多细节
+      if (err?.code) console.error('Error code:', err.code);
     }
   }
 }))

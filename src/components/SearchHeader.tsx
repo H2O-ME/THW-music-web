@@ -46,18 +46,35 @@ export function SearchHeader() {
     }
   }
 
-  // Fetch Hot Search once
-  useEffect(() => {
-    const fetchHotSearch = async () => {
-      try {
-        const data = await api.getHotSearch()
-        if (data.data) setHotSearch(data.data.slice(0, 10))
-      } catch (err) {
-        console.error('Fetch hot search error:', err)
+  const fetchHotSearch = async () => {
+    try {
+      const res = await api.getHotSearch()
+      // Robust data extraction for different API structures
+      const list = res?.data || res?.result?.hots || res?.result || (Array.isArray(res) ? res : []);
+      if (Array.isArray(list) && list.length > 0) {
+        // Normalize items to ensure they have searchWord
+        const normalized = list.map((item: any) => ({
+          ...item,
+          searchWord: item.searchWord || item.first || item.keyword || ''
+        })).filter((item: any) => item.searchWord);
+        setHotSearch(normalized.slice(0, 10))
       }
+    } catch (err) {
+      console.error('Fetch hot search error:', err)
     }
+  }
+
+  // Fetch Hot Search once on mount
+  useEffect(() => {
     fetchHotSearch()
   }, [])
+
+  // Re-fetch if empty when focused
+  useEffect(() => {
+    if (isFocused && hotSearch.length === 0) {
+      fetchHotSearch()
+    }
+  }, [isFocused, hotSearch.length])
 
   useEffect(() => {
     if (localSearch.trim().length < 2) {
@@ -87,13 +104,13 @@ export function SearchHeader() {
   if (!mounted) return null
 
   return (
-    <header className="h-20 flex items-center px-4 md:px-10 bg-white/40 dark:bg-[#0a0a0b]/40 backdrop-blur-xl z-20 sticky top-0">
-      <div className="flex items-center justify-between w-full max-w-[1400px] mx-auto gap-8">
+    <header className="h-24 flex items-center px-4 md:px-10 bg-transparent z-40 absolute top-0 left-0 right-0 pointer-events-none transition-all duration-300">
+      <div className="flex items-center justify-between w-full max-w-[1400px] mx-auto gap-8 pointer-events-auto">
         {/* Left Section: Menu Toggle (Mobile) */}
         <div className="flex md:hidden">
           <button 
             onClick={toggleSidebar}
-            className="text-gray-700 dark:text-gray-300 w-10 h-10 flex items-center justify-center rounded-xl bg-white/50 dark:bg-white/5 border border-white/20 dark:border-white/5 active:scale-95 transition-all shadow-sm"
+            className="text-gray-700 dark:text-gray-300 w-10 h-10 flex items-center justify-center rounded-xl bg-white/90 dark:bg-black/50 border border-white/20 dark:border-white/5 active:scale-95 transition-all shadow-xl backdrop-blur-xl"
           >
             <i className="ri-menu-2-line text-xl"></i>
           </button>
@@ -102,7 +119,7 @@ export function SearchHeader() {
         {/* Center Section: Search Bar */}
         <div className="flex-1 flex justify-center">
           <div className="relative w-full max-w-xl group">
-            <i className="ri-search-2-line absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors"></i>
+            <i className="ri-search-2-line absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors z-10"></i>
             <input
               type="text"
               value={localSearch}
@@ -110,14 +127,14 @@ export function SearchHeader() {
               onFocus={() => setIsFocused(true)}
               onBlur={() => setTimeout(() => setIsFocused(false), 200)}
               onKeyDown={handleKeyDown}
-              className="w-full pl-11 pr-12 py-3 bg-gray-100/50 dark:bg-white/5 hover:bg-gray-200/50 dark:hover:bg-white/10 border border-transparent focus:border-blue-500/20 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-blue-500/5 transition-all dark:text-white shadow-inner"
-              placeholder="搜索音乐、艺术、灵感..."
+              className="w-full pl-12 pr-12 py-3.5 bg-white/80 dark:bg-[#1a1a1c]/80 hover:bg-white dark:hover:bg-[#1a1a1c] border border-white/20 dark:border-white/5 rounded-2xl text-sm font-bold focus:outline-none transition-all dark:text-white shadow-lg backdrop-blur-xl focus:ring-2 focus:ring-blue-500/20"
+              placeholder="搜索任何歌曲、歌手、专辑..."
             />
             
             {localSearch && (
               <button 
-                onClick={() => setLocalSearch('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1"
+                onClick={() => { setLocalSearch(''); setSearchQuery('') }}
+                className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-900 dark:hover:text-white p-1 z-10"
               >
                 <i className="ri-close-circle-fill"></i>
               </button>
@@ -199,60 +216,28 @@ export function SearchHeader() {
         </div>
 
         {/* Right Section: Actions */}
-        <div className="flex items-center gap-3 md:gap-6">
-          <button className="hidden md:flex w-10 h-10 items-center justify-center rounded-xl hover:bg-white/50 dark:hover:bg-white/5 transition-all text-gray-500 dark:text-gray-400">
-            <i className="ri-notification-3-line text-xl"></i>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => user ? setIsUserMenuOpen(!isUserMenuOpen) : setLoginModalOpen(true)}
+            className="w-11 h-11 rounded-full bg-blue-600/90 backdrop-blur-md text-white flex items-center justify-center shadow-lg shadow-blue-600/20 hover:scale-105 transition-all border border-white/10"
+          >
+            {user ? (
+              <span className="font-black text-sm uppercase">{user.username[0]}</span>
+            ) : (
+              <i className="ri-user-3-fill text-lg"></i>
+            )}
           </button>
           
-          <div className="relative">
-            {user ? (
-              <div className="flex items-center gap-3">
-                <button 
-                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg shadow-blue-500/20 p-[2px] active:scale-95 transition-all"
-                >
-                  <div className="w-full h-full rounded-[10px] bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden font-bold text-blue-600 text-sm">
-                    {user.username[0].toUpperCase()}
-                  </div>
-                </button>
-                
-                {isUserMenuOpen && (
-                  <>
-                    <div className="fixed inset-0 z-40" onClick={() => setIsUserMenuOpen(false)}></div>
-                    <div className="absolute top-full right-0 mt-3 w-56 bg-white/95 dark:bg-gray-900/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-gray-100 dark:border-white/10 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right">
-                      <div className="p-4 border-b border-gray-50 dark:border-white/5">
-                        <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">当前账号</p>
-                        <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{user.username}</p>
-                      </div>
-                      <div className="p-2">
-                        <button className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-all text-left group">
-                          <i className="ri-user-settings-line text-lg text-gray-400 group-hover:text-blue-500"></i>
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">账号设置</span>
-                        </button>
-                        <button 
-                          onClick={() => {
-                            logout();
-                            setIsUserMenuOpen(false);
-                          }}
-                          className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all text-left group"
-                        >
-                          <i className="ri-logout-box-r-line text-lg text-gray-400 group-hover:text-red-500"></i>
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-red-500">退出登录</span>
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            ) : (
+          {isUserMenuOpen && user && (
+            <div className="absolute top-[calc(100%-8px)] right-0 mt-2 w-48 bg-white/95 dark:bg-[#1a1a1c]/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-gray-100 dark:border-white/5 p-2 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
               <button 
-                onClick={() => setLoginModalOpen(true)}
-                className="px-4 md:px-6 py-2 md:py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-black rounded-xl md:rounded-2xl transition-all active:scale-95 shadow-lg shadow-blue-600/20"
+                onClick={() => { logout(); setIsUserMenuOpen(false) }}
+                className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-red-500 font-bold hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all"
               >
-                登录
+                <i className="ri-logout-circle-line"></i> 退出登录
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </header>

@@ -187,65 +187,74 @@ export function Player() {
         const container = pipWindow.document.createElement('div')
         container.className = 'pip-container h-full w-full flex flex-col items-center justify-between p-8 text-center overflow-hidden relative bg-[#0a0a0b] text-white select-none'
         
-        // Dynamic Glass Background
-        const bg = pipWindow.document.createElement('div')
-        bg.className = 'absolute inset-0 z-0'
-        bg.innerHTML = `
-          <div class="absolute inset-0 bg-cover bg-center opacity-40 blur-[80px] scale-150 transition-all duration-1000" style="background-image: url('${currentSong.pic}')"></div>
-          <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-[#0a0a0b]"></div>
-        `
-        container.appendChild(bg)
-
         // Main Content
         const content = pipWindow.document.createElement('div')
         content.className = 'relative z-10 w-full flex flex-col items-center'
-        content.innerHTML = `
-          <div class="relative w-44 h-44 mb-10 group">
-            <div class="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full scale-110 opacity-50 transition-opacity"></div>
-            <img src="${currentSong.pic}" class="relative w-full h-full rounded-[2.5rem] object-cover shadow-[0_20px_40px_rgba(0,0,0,0.4)] border border-white/10" />
+        
+        // Helper for inner HTML to avoid repetition
+        const renderPiPContent = (s: any, lyric: string) => `
+          <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-cover bg-center opacity-40 blur-[80px] scale-150 transition-all duration-1000" style="background-image: url('${currentSong.pic}')"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-[#0a0a0b]"></div>
           </div>
-
-          <div class="w-full mb-10 px-2">
-            <h2 class="text-2xl font-black mb-2 truncate drop-shadow-lg tracking-tight">${currentSong.name}</h2>
-            <p class="text-white/40 text-sm font-bold tracking-widest uppercase truncate">${currentSong.artist}</p>
-          </div>
-          
-          <div class="w-full mb-10 min-h-[4rem] flex items-center justify-center">
-            <p id="pip-lyric" class="text-lg font-bold text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)] line-clamp-2 leading-tight px-4 transition-all duration-300">
-              ${currentLyric}
-            </p>
-          </div>
-
-          <div class="w-full px-2 mb-10">
-            <div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden relative border border-white/5">
-              <div id="pip-progress" class="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-600 to-blue-400 shadow-[0_0_10px_rgba(37,99,235,0.5)] transition-all duration-300" style="width: ${(state.currentTime / (state.duration || 1)) * 100}%"></div>
+          <div class="relative z-10 w-full flex flex-col items-center">
+            <div class="relative w-44 h-44 mb-10 group mt-4">
+              <div class="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full scale-110 opacity-50"></div>
+              <img src="${currentSong.pic}" class="relative w-full h-full rounded-[2.5rem] object-cover shadow-[0_20px_40px_rgba(0,0,0,0.4)] border border-white/10" />
             </div>
-            <div class="flex justify-between mt-3 text-[10px] font-black text-white/20 tracking-tighter">
-              <span id="pip-current-time">${formatTime(state.currentTime)}</span>
-              <span id="pip-duration">${formatTime(state.duration)}</span>
-            </div>
-          </div>
 
-          <div class="flex items-center gap-10">
-            <button id="pip-prev" class="p-2 text-white/40 hover:text-white transition-all active:scale-90"><i class="ri-skip-back-fill text-3xl"></i></button>
-            <button id="pip-play" class="w-16 h-16 bg-white text-black rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-[0_10px_30px_rgba(255,255,255,0.2)]">
-              <i class="ri-${state.isPlaying ? 'pause' : 'play'}-fill text-4xl ml-0.5"></i>
-            </button>
-            <button id="pip-next" class="p-2 text-white/40 hover:text-white transition-all active:scale-90"><i class="ri-skip-forward-fill text-3xl"></i></button>
+            <div class="w-full mb-10 px-2 text-center">
+              <h2 class="text-2xl font-black mb-2 truncate drop-shadow-lg tracking-tight">${currentSong.name}</h2>
+              <p class="text-white/40 text-sm font-bold tracking-widest uppercase truncate">${currentSong.artist}</p>
+            </div>
+            
+            <div class="w-full mb-10 min-h-[4rem] flex items-center justify-center">
+              <p id="pip-lyric" class="text-lg font-bold text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)] line-clamp-2 leading-tight px-4 transition-all duration-300">
+                ${lyric}
+              </p>
+            </div>
+
+            <div class="w-full px-2 mb-10">
+              <div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden relative border border-white/5">
+                <div id="pip-progress" class="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-600 to-blue-400 shadow-[0_0_10px_rgba(37,99,235,0.5)]" style="width: ${(s.currentTime / (s.duration || 1)) * 100}%"></div>
+              </div>
+              <div class="flex justify-between mt-3 text-[10px] font-black text-white/20 tracking-tighter uppercase">
+                <span id="pip-current-time">${formatTime(s.currentTime)}</span>
+                <span id="pip-duration">${formatTime(s.duration)}</span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-10">
+              <button id="pip-prev" class="p-2 text-white/40 hover:text-white transition-all active:scale-90"><i class="ri-skip-back-fill text-3xl"></i></button>
+              <button id="pip-play" class="w-16 h-16 bg-white text-black rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-[0_10px_30px_rgba(255,255,255,0.2)]">
+                <i class="ri-${s.isPlaying ? 'pause' : 'play'}-fill text-4xl ml-0.5"></i>
+              </button>
+              <button id="pip-next" class="p-2 text-white/40 hover:text-white transition-all active:scale-90"><i class="ri-skip-forward-fill text-3xl"></i></button>
+            </div>
           </div>
         `
-        container.appendChild(content)
+
+        container.innerHTML = renderPiPContent(state, currentLyric)
         pipWindow.document.body.appendChild(container)
 
         // Events
-        pipWindow.document.getElementById('pip-play').onclick = () => {
-          const s = usePlayerStore.getState()
-          setIsPlaying(!s.isPlaying)
+        const setupEvents = () => {
+          const playBtn = pipWindow.document.getElementById('pip-play')
+          const prevBtn = pipWindow.document.getElementById('pip-prev')
+          const nextBtn = pipWindow.document.getElementById('pip-next')
+
+          if (playBtn) playBtn.onclick = () => {
+            const s = usePlayerStore.getState()
+            setIsPlaying(!s.isPlaying)
+          }
+          if (prevBtn) prevBtn.onclick = () => prevSong()
+          if (nextBtn) nextBtn.onclick = () => nextSong()
         }
-        pipWindow.document.getElementById('pip-prev').onclick = () => prevSong()
-        pipWindow.document.getElementById('pip-next').onclick = () => nextSong()
+
+        setupEvents()
 
         // Sync
+        let lastSongId = currentSong.id
         const updateTimer = setInterval(() => {
           if (pipWindow.closed) {
             clearInterval(updateTimer)
@@ -253,6 +262,16 @@ export function Player() {
           }
           
           const s = usePlayerStore.getState()
+          const currentS = s.playlist[s.currentSongIndex]
+
+          // If song changed, re-render everything
+          if (currentS && currentS.id !== lastSongId) {
+            lastSongId = currentS.id
+            const currentLyricText = lyrics[s.currentLyricIndex]?.text || 'THW Music'
+            container.innerHTML = renderPiPContent(s, currentLyricText)
+            setupEvents()
+            return
+          }
           
           // Progress
           const progress = pipWindow.document.getElementById('pip-progress')
@@ -268,25 +287,19 @@ export function Player() {
           const lyricEl = pipWindow.document.getElementById('pip-lyric')
           const currentLyricText = lyrics[s.currentLyricIndex]?.text || 'THW Music'
           if (lyricEl && lyricEl.innerText !== currentLyricText) {
-            lyricEl.style.opacity = '0'
-            lyricEl.style.transform = 'translateY(5px)'
-            setTimeout(() => {
-              lyricEl.innerText = currentLyricText
-              lyricEl.style.opacity = '1'
-              lyricEl.style.transform = 'translateY(0)'
-            }, 150)
+            lyricEl.innerText = currentLyricText
           }
 
           // Play/Pause Icon
-          const playBtn = pipWindow.document.querySelector('#pip-play i')
-          if (playBtn) playBtn.className = `ri-${s.isPlaying ? 'pause' : 'play'}-fill text-4xl ml-0.5`
-        }, 500)
+          const playBtnIcon = pipWindow.document.querySelector('#pip-play i')
+          if (playBtnIcon) playBtnIcon.className = `ri-${s.isPlaying ? 'pause' : 'play'}-fill text-4xl ml-0.5`
+        }, 200)
 
       } catch (err) {
         console.error('PiP Error:', err)
       }
     } else {
-      alert('您的浏览器不支持小窗播放功能')
+      alert('您的浏览器不支持画中画控制窗口，请使用最新版 Chrome 或 Edge')
     }
   }
 
@@ -298,30 +311,17 @@ export function Player() {
 
   return (
     <div className={cn(
-      "fixed left-0 right-0 md:left-6 md:right-6 z-[200] perspective-[1000px] group/player px-2 pb-2 md:p-0 transition-all duration-700 ease-in-out",
-      isLyricViewOpen ? "bottom-0 md:bottom-6" : "bottom-[72px] md:bottom-6",
-      !hasSong ? "translate-y-[200%] opacity-0 pointer-events-none" : (
-        isPlaying 
-          ? "translate-y-0" 
-          : "translate-y-[calc(100%-32px)] hover:translate-y-0"
-      )
+      "fixed left-0 right-0 md:left-[280px] md:right-8 z-[200] transition-all duration-700 ease-in-out",
+      isLyricViewOpen 
+        ? "bottom-[-100px] opacity-0 pointer-events-none" 
+        : "bottom-[70px] md:bottom-6",
+      !hasSong ? "translate-y-[200%] opacity-0 pointer-events-none" : "translate-y-0"
     )}>
-      {/* Diffraction Background */}
-      {currentSong && !isLyricViewOpen && (
-        <div className={cn(
-          "absolute inset-4 z-0 rounded-3xl opacity-40 blur-[40px] transition-all duration-1000 animate-pulse-slow pointer-events-none hidden md:block",
-          !isPlaying && "opacity-0 group-hover/player:opacity-40"
-        )}>
-          <div className="absolute inset-0 bg-cover bg-center opacity-70" style={{ backgroundImage: `url(${currentSong.pic})` }}></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 mix-blend-overlay"></div>
-        </div>
-      )}
-
       <div className={cn(
-        "relative h-20 md:h-24 bg-white/80 dark:bg-[#0a0a0b]/80 backdrop-blur-2xl border border-white/20 dark:border-white/10 flex items-center justify-between transition-all duration-500 shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden",
+        "relative h-16 md:h-20 flex items-center justify-between transition-all duration-500 overflow-hidden",
         isLyricViewOpen 
-          ? "bg-[#0a0a0b]/80 text-white ring-1 ring-white/10 border-white/5 rounded-3xl md:rounded-[2.5rem] px-4 md:px-6 w-full" 
-          : "text-gray-900 dark:text-white rounded-3xl md:rounded-[2rem] w-full px-4 md:px-8 cursor-pointer"
+          ? "bg-[#1a1a1c]/80 text-white border-white/5 rounded-[2.5rem] px-4 md:px-8 w-full backdrop-blur-3xl shadow-2xl" 
+          : "bg-white/90 dark:bg-[#0a0a0b]/90 backdrop-blur-2xl border border-white/40 dark:border-white/5 text-gray-900 dark:text-white rounded-[2rem] md:rounded-[2.5rem] w-full px-4 md:px-6 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.1)]"
       )}>
         <audio
           ref={audioRef}
@@ -337,84 +337,68 @@ export function Player() {
         />
 
         {/* Song Info */}
-        <div className={cn(
-          "flex items-center gap-3 md:gap-5 flex-1 md:w-1/3 min-w-0 transition-all duration-300",
-        )}>
+        <div className="flex items-center gap-3.5 flex-1 md:w-1/3 min-w-0">
           <div 
             className="relative group cursor-pointer shrink-0"
             onClick={() => currentSong && setIsLyricViewOpen(!isLyricViewOpen)}
           >
             <div className={cn(
-              "w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl shadow-lg overflow-hidden bg-gray-100 dark:bg-white/5 flex items-center justify-center border border-white/10"
+              "w-10 h-10 md:w-12 md:h-12 rounded-xl shadow-md overflow-hidden bg-gray-100 dark:bg-white/5 border border-white/10"
             )}>
               {currentSong ? (
                 <img 
                   src={currentSong.pic} 
                   alt={currentSong.name} 
-                  className={cn("w-full h-full object-cover transition-transform duration-1000", isPlaying ? "scale-100" : "scale-110 grayscale")}
+                  className={cn("w-full h-full object-cover transition-all duration-700", isPlaying ? "scale-100 rotate-0" : "scale-110 grayscale")}
                 />
               ) : (
-                <i className="ri-music-2-line text-gray-300 dark:text-gray-600 text-xl md:text-2xl"></i>
+                <i className="ri-music-2-line text-gray-300 dark:text-gray-600 text-lg md:text-xl"></i>
               )}
             </div>
-            {currentSong && (
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-xl md:rounded-2xl transition-all backdrop-blur-sm">
-                <i className={cn("text-white text-lg md:text-xl", isLyricViewOpen ? "ri-arrow-down-s-line" : "ri-arrow-up-s-line")}></i>
-              </div>
-            )}
           </div>
           <div className="min-w-0">
-            <h4 className={cn("font-bold text-sm md:text-base truncate transition-colors", isLyricViewOpen ? "text-white" : "text-gray-900 dark:text-white")}>
+            <h4 className="font-black text-xs md:text-sm truncate leading-tight">
               {currentSong?.name || 'THW Music'}
             </h4>
-            <p className={cn("text-[10px] md:text-xs font-medium truncate transition-colors", isLyricViewOpen ? "text-white/60" : "text-gray-500 dark:text-gray-400")}>
+            <p className="text-[9px] md:text-[10px] font-bold opacity-40 truncate mt-0.5 uppercase tracking-wider">
               {currentSong?.artist || '探索无限可能'}
             </p>
           </div>
         </div>
 
         {/* Controls */}
-        <div className="flex flex-col items-center justify-center gap-0 md:gap-1 shrink-0 z-10 mx-4">
-          <div className="flex items-center gap-4 md:gap-8 mb-0 md:mb-1">
-            <button onClick={prevSong} disabled={!currentSong} className={cn(
-              "transition-all active:scale-90 disabled:opacity-30 hidden md:block", 
-              isLyricViewOpen ? "text-white/80 hover:text-white" : "text-gray-400 hover:text-blue-600",
-            )}>
-              <i className="ri-skip-back-fill text-2xl"></i>
+        <div className="flex flex-col items-center justify-center gap-0.5 shrink-0 z-10 mx-2 md:mx-4">
+          <div className="flex items-center gap-4 md:gap-7">
+            <button onClick={prevSong} disabled={!currentSong} className="transition-all active:scale-90 disabled:opacity-30 hidden md:block text-gray-400 hover:text-blue-600">
+              <i className="ri-skip-back-fill text-xl md:text-2xl"></i>
             </button>
             <button 
               onClick={() => currentSong && setIsPlaying(!isPlaying)}
               disabled={!currentSong}
               className={cn(
-                "w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all active:scale-95 disabled:opacity-50 shadow-xl shrink-0", 
+                "w-11 h-11 rounded-full flex items-center justify-center transition-all active:scale-95 disabled:opacity-50 shadow-lg shrink-0", 
                 isLyricViewOpen 
-                  ? "bg-white text-black hover:scale-105" 
-                  : "bg-blue-600 text-white hover:bg-blue-700 hover:scale-105 shadow-blue-600/30"
+                  ? "bg-white text-black" 
+                  : "bg-blue-600 text-white shadow-blue-600/20"
               )}
             >
               {isLoading ? (
-                <i className="ri-loader-4-line text-xl md:text-2xl animate-spin"></i>
+                <i className="ri-loader-4-line text-xl animate-spin"></i>
               ) : (
-                <i className={cn(isPlaying ? "ri-pause-fill" : "ri-play-fill", "text-xl md:text-2xl")}></i>
+                <i className={cn(isPlaying ? "ri-pause-fill" : "ri-play-fill", "text-xl")}></i>
               )}
             </button>
-            <button onClick={nextSong} disabled={!currentSong} className={cn(
-              "transition-all active:scale-90 disabled:opacity-30", 
-              isLyricViewOpen ? "text-white/80 hover:text-white" : "text-gray-400 hover:text-blue-600",
-            )}>
+            <button onClick={nextSong} disabled={!currentSong} className="transition-all active:scale-90 disabled:opacity-30 text-gray-400 hover:text-blue-600">
               <i className="ri-skip-forward-fill text-xl md:text-2xl"></i>
             </button>
           </div>
           
-          {/* Progress Bar */}
-          <div className={cn(
-            "w-full min-w-[200px] md:min-w-[400px] flex items-center gap-2 group/progress relative transition-all duration-300",
-            !isLyricViewOpen && "hidden md:flex"
-          )}>
-            <span className={cn("text-[9px] font-black w-8 text-right tabular-nums transition-colors hidden md:block", isLyricViewOpen ? "text-white/40" : "text-gray-400 group-hover/progress:text-blue-500")}>
+          {/* Progress Bar (Desktop only in player bar) */}
+          <div className="hidden md:flex w-[200px] lg:w-[320px] items-center gap-3 group/progress relative">
+            <span className="text-[9px] font-black w-8 text-right opacity-30 tabular-nums">
               {formatTime(displayTime)}
             </span>
-            <div className="flex-1 relative h-3 flex items-center cursor-pointer">
+            <div className="flex-1 relative h-4 flex items-center cursor-pointer">
               <input
                 type="range"
                 min="0"
@@ -423,64 +407,60 @@ export function Player() {
                 onChange={handleProgressChange}
                 onMouseDown={handleProgressChangeStart}
                 onMouseUp={handleProgressChangeEnd}
-                onTouchStart={handleProgressChangeStart}
-                onTouchEnd={handleProgressChangeEnd}
-                className="player-progress opacity-0 absolute inset-0 z-20 cursor-pointer"
+                className="player-progress opacity-0 absolute inset-0 z-20 cursor-pointer w-full"
               />
-              <div className="w-full h-[2px] md:h-1 bg-gray-200 dark:bg-white/10 rounded-full overflow-hidden">
+              <div className="w-full h-[3px] bg-gray-200 dark:bg-white/5 rounded-full overflow-hidden relative">
                 <div 
-                  className={cn("h-full rounded-full transition-all duration-100", isLyricViewOpen ? "bg-white" : "bg-gradient-to-r from-blue-400 to-blue-600")}
+                  className={cn("absolute inset-y-0 left-0 rounded-full transition-all duration-100", isLyricViewOpen ? "bg-white" : "bg-blue-600")}
                   style={{ width: `${(displayTime / (duration || 1)) * 100}%` }}
                 ></div>
               </div>
             </div>
-            <span className={cn("text-[9px] font-black w-8 tabular-nums transition-colors hidden md:block", isLyricViewOpen ? "text-white/40" : "text-gray-400 group-hover/progress:text-blue-500")}>
+            <span className="text-[9px] font-black w-8 opacity-30 tabular-nums">
               {formatTime(duration)}
             </span>
           </div>
         </div>
 
         {/* Extra Controls */}
-        <div className={cn(
-          "flex items-center justify-end gap-2 md:gap-3 flex-1 md:w-1/3 transition-opacity duration-300",
-        )}>
+        <div className="flex items-center justify-end gap-0.5 md:gap-1.5 flex-1 md:w-1/3">
           <button 
             onClick={() => currentSong && toggleFavorite(currentSong)}
             disabled={!currentSong}
             className={cn(
-              "w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all disabled:opacity-30 active:scale-90",
+              "w-9 h-9 rounded-full flex items-center justify-center transition-all disabled:opacity-30 active:scale-90",
               currentSong && isFavorite(currentSong.id) 
-                ? "bg-red-500/10 text-red-500" 
-                : "hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-red-500"
+                ? "text-red-500" 
+                : "text-gray-400 hover:text-red-500"
             )}
           >
-            <i className={cn(currentSong && isFavorite(currentSong.id) ? "ri-heart-fill" : "ri-heart-line", "text-lg md:text-xl")}></i>
+            <i className={cn(currentSong && isFavorite(currentSong.id) ? "ri-heart-fill" : "ri-heart-line", "text-lg")}></i>
           </button>
           
           <button 
             onClick={togglePiP}
             disabled={!currentSong}
-            className="w-10 h-10 rounded-full hidden md:flex items-center justify-center hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-blue-600 transition-all disabled:opacity-30 active:scale-90"
-            title="画中画模式"
+            className="w-9 h-9 rounded-full hidden md:flex items-center justify-center text-gray-400 hover:text-blue-600 transition-all disabled:opacity-30"
           >
-             <i className="ri-picture-in-picture-2-line text-xl"></i>
+             <i className="ri-picture-in-picture-2-line text-lg"></i>
           </button>
 
           <button 
             onClick={() => currentSong && setIsLyricViewOpen(!isLyricViewOpen)}
             disabled={!currentSong}
             className={cn(
-              "w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all disabled:opacity-30 active:scale-90",
+              "w-9 h-9 rounded-full flex items-center justify-center transition-all disabled:opacity-30 active:scale-90",
               isLyricViewOpen 
-                ? "bg-white/20 text-white" 
-                : "hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-blue-600"
+                ? "bg-white/10 text-white" 
+                : "text-gray-400 hover:text-blue-600"
             )}
           >
-            <i className="ri-article-line text-lg md:text-xl"></i>
+            <i className="ri-article-line text-lg"></i>
           </button>
         </div>
       </div>
     </div>
   )
+
 
 }

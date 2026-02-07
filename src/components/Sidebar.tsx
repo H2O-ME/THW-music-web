@@ -55,6 +55,7 @@ export function Sidebar() {
     { id: 'home', icon: 'ri-home-4-line', label: '首页', title: '首页' },
     { id: 'playlists', icon: 'ri-play-list-fill', label: '歌单广场', title: '歌单广场' },
     { id: 'favorites', icon: 'ri-heart-line', label: '我的收藏', title: '我的收藏' },
+    { id: 'history', icon: 'ri-history-line', label: '最近播放', title: '最近播放' },
   ] as const
 
   return (
@@ -71,32 +72,33 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside 
         className={cn(
-          "flex flex-col bg-white/60 dark:bg-black/40 backdrop-blur-md border-r border-gray-200/60 dark:border-white/10 shadow-[4px_0_24px_rgba(0,0,0,0.02)] pt-4 px-2 z-50 transition-all duration-300 h-full shrink-0",
+          "flex flex-col bg-white dark:bg-[#0a0a0b] border-r border-gray-100 dark:border-white/5 z-50 transition-all duration-300 h-full shrink-0",
           "fixed md:relative",
-          isSidebarOpen ? "w-64 translate-x-0" : "w-0 md:w-20 -translate-x-full md:translate-x-0"
+          isSidebarOpen ? "w-64 translate-x-0" : "w-0 md:w-24 -translate-x-full md:translate-x-0"
         )}
       >
         <div className={cn(
-          "mb-8 px-2 flex items-center h-10 transition-all",
-          isSidebarOpen ? "gap-4 px-4" : "justify-center"
+          "mb-10 mt-6 px-2 flex items-center h-10 transition-all",
+          isSidebarOpen ? "gap-4 px-6" : "justify-center"
         )}>
-          <button 
-            onClick={toggleSidebar}
-            className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 transition-colors"
-          >
-            <i className="ri-menu-line text-xl"></i>
-          </button>
-          {isSidebarOpen && (
+          {isSidebarOpen ? (
             <div className="flex items-center gap-3 overflow-hidden whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300">
-              <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-blue-500/30">
-                <i className="ri-music-fill"></i>
+              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-blue-500/20">
+                <i className="ri-music-fill text-xl"></i>
               </div>
-              <h1 className="font-bold text-xl tracking-tight text-gray-900 dark:text-white">THW music</h1>
+              <h1 className="font-black text-xl tracking-tight text-gray-900 dark:text-white uppercase">THW music</h1>
             </div>
+          ) : (
+            <button 
+              onClick={toggleSidebar}
+              className="w-12 h-12 rounded-2xl hover:bg-gray-100 dark:hover:bg-white/5 text-blue-600 transition-all flex items-center justify-center shadow-sm"
+            >
+              <i className="ri-music-fill text-2xl"></i>
+            </button>
           )}
         </div>
 
-        <nav className="space-y-2 flex-1 px-3">
+        <nav className="space-y-1.5 flex-1 px-4">
           {navItems.map((item) => (
             <button
               key={item.id}
@@ -105,24 +107,24 @@ export function Sidebar() {
                 if (window.innerWidth < 768) toggleSidebar()
               }}
               className={cn(
-                "w-full flex items-center rounded-2xl transition-all overflow-hidden whitespace-nowrap text-sm font-bold h-12 relative group",
-                isSidebarOpen ? "px-4 gap-4" : "justify-center",
+                "w-full flex items-center rounded-2xl transition-all overflow-hidden whitespace-nowrap h-12 relative group",
+                isSidebarOpen ? "px-5 gap-4" : "justify-center",
                 currentView === item.id 
-                  ? "bg-blue-600 text-white shadow-xl shadow-blue-600/20" 
-                  : "hover:bg-gray-100 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                  ? "bg-blue-600/5 text-blue-600" 
+                  : "hover:bg-gray-50 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
               )}
               title={item.title}
             >
-              <i className={cn(item.icon, "text-xl shrink-0 transition-transform group-hover:scale-110 duration-300")}></i>
-              {isSidebarOpen && <span className="animate-in fade-in slide-in-from-left-2 duration-200">{item.label}</span>}
+              <i className={cn(item.icon, "text-xl shrink-0 transition-transform group-hover:scale-110", currentView === item.id ? "text-blue-600" : "")}></i>
+              {isSidebarOpen && <span className={cn("text-sm font-bold", currentView === item.id ? "text-gray-900 dark:text-white" : "opacity-80")}>{item.label}</span>}
               
-              {!isSidebarOpen && currentView === item.id && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full"></div>
+              {currentView === item.id && (
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-blue-600 rounded-l-full"></div>
               )}
             </button>
           ))}
           
-          <div className="my-6 border-t border-gray-100 dark:border-white/5 mx-2"></div>
+          <div className="pt-6 my-6 border-t border-gray-100 dark:border-white/5 mx-2"></div>
         </nav>
 
         <div className="mt-auto mb-6 px-2">

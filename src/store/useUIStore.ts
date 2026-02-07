@@ -2,7 +2,7 @@ import { create } from 'zustand'
 
 interface UIState {
   isSidebarOpen: boolean
-  currentView: 'home' | 'playlists' | 'favorites' | 'search'
+  currentView: 'home' | 'playlists' | 'favorites' | 'search' | 'history'
   searchQuery: string
   selectedPlaylist: any | null
   

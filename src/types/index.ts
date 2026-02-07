@@ -50,6 +50,7 @@ export interface NewSongItem {
     duration: number;
     album: {
       blurPicUrl: string;
+      name: string;
     };
   };
 }
