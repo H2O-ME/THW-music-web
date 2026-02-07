@@ -6,6 +6,13 @@ import { useFavoritesStore } from '@/store/useFavoritesStore'
 import { supabase } from '@/lib/supabase'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { useEffect, useRef } from 'react'
+
+declare global {
+  interface Window {
+    initGeetest4: any;
+  }
+}
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -17,14 +24,99 @@ export function LoginModal() {
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const captchaInstance = useRef<any>(null)
+
+  const bindCaptchaEvents = (instance: any) => {
+    instance.onSuccess(async () => {
+      const result = instance.getValidate();
+      try {
+        const verifyRes = await fetch('/api/auth/verify-captcha', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(result),
+        });
+        const verifyData = await verifyRes.json();
+        if (!verifyData.success) {
+          setError('人机验证失败，请重试');
+          setIsLoading(false);
+          return;
+        }
+        await performLogin();
+      } catch (err) {
+        setError('验证过程出错');
+        setIsLoading(false);
+      }
+    });
+    instance.onError((err: any) => {
+      console.error('Geetest Error:', err);
+      setError('验证码加载异常');
+      setIsLoading(false);
+    });
+    instance.onClose(() => {
+      setIsLoading(false);
+    });
+  };
+
+  useEffect(() => {
+    if (isLoginModalOpen && typeof window !== 'undefined') {
+      const initCaptcha = () => {
+        if (typeof window.initGeetest4 === 'function' && !captchaInstance.current) {
+          window.initGeetest4({
+            captchaId: 'E1EC2EDF6ce881db23BCD9DF5D7BB1D',
+            product: 'bind',
+            language: 'zh-cn',
+          }, (instance: any) => {
+            captchaInstance.current = instance;
+            bindCaptchaEvents(instance);
+          });
+          return true;
+        }
+        return false;
+      };
+
+      if (!initCaptcha()) {
+        const checkGeetest = setInterval(() => {
+          if (initCaptcha()) {
+            clearInterval(checkGeetest);
+          }
+        }, 500);
+        return () => clearInterval(checkGeetest);
+      }
+    }
+  }, [isLoginModalOpen]);
 
   if (!isLoginModalOpen) return null
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!username || !password) {
+      setError('请输入用户名和密码')
+      return
+    }
+
     setIsLoading(true)
     setError('')
 
+    if (captchaInstance.current) {
+      captchaInstance.current.showCaptcha();
+    } else if (typeof window.initGeetest4 === 'function') {
+      window.initGeetest4({
+        captchaId: 'E1EC2EDF6ce881db23BCD9DF5D7BB1D',
+        product: 'bind',
+        language: 'zh-cn',
+      }, (instance: any) => {
+        captchaInstance.current = instance;
+        bindCaptchaEvents(instance);
+        instance.showCaptcha();
+      });
+    } else {
+      setError('验证码模块尚未加载完毕，请稍候再试')
+      setIsLoading(false)
+    }
+  }
+
+  const performLogin = async () => {
     try {
       console.log('Attempting login for:', username)
       // Check if user exists
@@ -32,15 +124,11 @@ export function LoginModal() {
         .from('app_users')
         .select('*')
         .eq('username', username)
-        .maybeSingle() // Use maybeSingle to avoid error code for missing user
+        .maybeSingle()
 
-      if (searchError) {
-        console.error('Supabase search error:', searchError)
-        throw searchError
-      }
+      if (searchError) throw searchError
 
       if (user) {
-        console.log('User found, checking password')
         if (user.password === password) {
           setUser({ id: user.id, username: user.username })
           useFavoritesStore.getState().loadFavorites()
@@ -49,7 +137,6 @@ export function LoginModal() {
           setError('密码错误')
         }
       } else {
-        console.log('User not found, registering new user')
         // Register new user
         const { data: newUser, error: createError } = await supabase
           .from('app_users')
@@ -57,10 +144,7 @@ export function LoginModal() {
           .select()
           .maybeSingle()
 
-        if (createError) {
-          console.error('Supabase create error:', createError)
-          throw createError
-        }
+        if (createError) throw createError
         
         if (newUser) {
           setUser({ id: newUser.id, username: newUser.username })

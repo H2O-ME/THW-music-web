@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "remixicon/fonts/remixicon.css";
 import "./globals.css";
 import { ClientLayout } from "@/components/ClientLayout";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,6 +37,7 @@ export default function RootLayout({
         <ClientLayout>
           {children}
         </ClientLayout>
+        <Script src="https://static.geetest.com/v4/gt4.js" strategy="beforeInteractive" />
       </body>
     </html>
   );

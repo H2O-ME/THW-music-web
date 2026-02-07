@@ -2,6 +2,8 @@
 
 import dynamic from 'next/dynamic'
 import { PWARegistration } from "@/components/PWARegistration"
+import { useEffect } from 'react'
+import { useAuthStore } from '@/store/useAuthStore'
 
 const Sidebar = dynamic(() => import("@/components/Sidebar").then(m => m.Sidebar), { ssr: false })
 const Player = dynamic(() => import("@/components/Player").then(m => m.Player), { ssr: false })
@@ -10,6 +12,18 @@ const LoginModal = dynamic(() => import("@/components/LoginModal").then(m => m.L
 const BottomNav = dynamic(() => import("@/components/BottomNav").then(m => m.BottomNav), { ssr: false })
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
+  const { user, setLoginModalOpen } = useAuthStore()
+
+  useEffect(() => {
+    // Check if user is logged in, if not open modal after a short delay to ensure hydration
+    if (!user) {
+      const timer = setTimeout(() => {
+        setLoginModalOpen(true)
+      }, 500)
+      return () => clearTimeout(timer)
+    }
+  }, [user, setLoginModalOpen])
+
   return (
     <>
       <PWARegistration />
