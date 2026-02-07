@@ -38,9 +38,10 @@ export async function POST(request: Request) {
     if (result.result === 'success') {
       return NextResponse.json({ success: true });
     } else {
+      console.error('Geetest verification failed:', result);
       return NextResponse.json({ 
         success: false, 
-        message: '极验验证未通过', 
+        message: result.reason || '极验验证未通过', 
         reason: result.reason,
         msg: result.msg 
       }, { status: 400 });

@@ -29,6 +29,13 @@ export function LoginModal() {
   const bindCaptchaEvents = (instance: any) => {
     instance.onSuccess(async () => {
       const result = instance.getValidate();
+      if (!result) {
+        console.error('没有获取到验证结果');
+        setError('验证码验证失败，请重试');
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const verifyRes = await fetch('/api/auth/verify-captcha', {
           method: 'POST',
@@ -38,20 +45,25 @@ export function LoginModal() {
         const verifyData = await verifyRes.json();
         if (!verifyData.success) {
           setError(verifyData.message || '人机验证失败，请重试');
+          instance.reset(); // 失败则重置验证码
           setIsLoading(false);
           return;
         }
         await performLogin();
       } catch (err) {
-        setError('验证过程出错');
+        console.error('验证过程出错:', err);
+        setError('验证过程出错，请重试');
+        instance.reset();
         setIsLoading(false);
       }
     });
+
     instance.onError((err: any) => {
-      console.error('Geetest Error:', err);
-      setError('验证码加载异常');
+      console.error('极验验证码错误:', err);
+      setError('验证码加载异常，请刷新页面重试');
       setIsLoading(false);
     });
+
     instance.onClose(() => {
       setIsLoading(false);
     });
@@ -63,9 +75,9 @@ export function LoginModal() {
         if (typeof window.initGeetest4 === 'function' && !captchaInstance.current) {
           window.initGeetest4({
             captchaId: 'E1EC2EDF6ce881db23BCD9DF5D7BB1D',
-            product: 'popup',
+            product: 'bind', // 使用绑定模式，点击按钮时触发
             language: 'zh-cn',
-            protocol: 'https://',
+            riskType: 'slide', // 默认滑块验证
             timeout: 10000
           }, (instance: any) => {
             captchaInstance.current = instance;
@@ -91,7 +103,7 @@ export function LoginModal() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!username || !password) {
       setError('请输入用户名和密码')
       return
@@ -100,23 +112,30 @@ export function LoginModal() {
     setIsLoading(true)
     setError('')
 
-    if (captchaInstance.current) {
-      captchaInstance.current.showCaptcha();
-    } else if (typeof window.initGeetest4 === 'function') {
-      window.initGeetest4({
-        captchaId: 'E1EC2EDF6ce881db23BCD9DF5D7BB1D',
-        product: 'popup',
-        language: 'zh-cn',
-        protocol: 'https://',
-        timeout: 10000
-      }, (instance: any) => {
-        captchaInstance.current = instance;
-        bindCaptchaEvents(instance);
-        instance.showCaptcha();
-      });
-    } else {
-      setError('验证码模块尚未加载完毕，请稍候再试')
-      setIsLoading(false)
+    // 启动极验验证
+    try {
+      if (captchaInstance.current) {
+        captchaInstance.current.showCaptcha();
+      } else if (typeof window.initGeetest4 === 'function') {
+        window.initGeetest4({
+          captchaId: 'E1EC2EDF6ce881db23BCD9DF5D7BB1D',
+          product: 'bind',
+          language: 'zh-cn',
+          riskType: 'slide',
+          timeout: 10000
+        }, (instance: any) => {
+          captchaInstance.current = instance;
+          bindCaptchaEvents(instance);
+          instance.showCaptcha();
+        });
+      } else {
+        setError('验证码模块尚未加载完毕，请稍候再试')
+        setIsLoading(false)
+      }
+    } catch (error) {
+      console.error('启动验证码失败:', error);
+      setError('验证码启动失败，请刷新页面重试');
+      setIsLoading(false);
     }
   }
 
