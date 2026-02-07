@@ -33,14 +33,16 @@ export async function POST(request: Request) {
     });
 
     const result = await response.json();
+    console.log('Geetest verification result:', result);
 
     if (result.result === 'success') {
       return NextResponse.json({ success: true });
     } else {
       return NextResponse.json({ 
         success: false, 
-        message: '验证失败', 
-        reason: result.reason 
+        message: '极验验证未通过', 
+        reason: result.reason,
+        msg: result.msg 
       }, { status: 400 });
     }
   } catch (error: any) {

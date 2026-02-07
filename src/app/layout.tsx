@@ -1,21 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
 import "remixicon/fonts/remixicon.css";
 import "./globals.css";
 import { ClientLayout } from "@/components/ClientLayout";
 import Script from "next/script";
 
-const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
   title: "THW music",
   description: "A premium music player",
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "THW music",
-  },
 };
 
 export const viewport: Viewport = {
@@ -33,11 +24,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body className={`${inter.className} antialiased`} suppressHydrationWarning>
+      <head>
+        <meta name="referrer" content="no-referrer-when-downgrade" />
+      </head>
+      <body className="antialiased" suppressHydrationWarning>
         <ClientLayout>
           {children}
         </ClientLayout>
-        <Script src="https://static.geetest.com/v4/gt4.js" strategy="beforeInteractive" />
+        <Script src="https://static.geetest.com/v4/gt4.js" strategy="afterInteractive" />
       </body>
     </html>
   );

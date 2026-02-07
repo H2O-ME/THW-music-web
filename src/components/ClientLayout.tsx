@@ -1,7 +1,6 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { PWARegistration } from "@/components/PWARegistration"
 import { useEffect } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
 
@@ -26,7 +25,6 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <PWARegistration />
       <div className="flex flex-1 h-screen overflow-hidden">
         <Sidebar />
         <main className="flex-1 relative bg-white/50 mica-effect overflow-hidden flex flex-col">

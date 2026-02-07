@@ -37,7 +37,7 @@ export function LoginModal() {
         });
         const verifyData = await verifyRes.json();
         if (!verifyData.success) {
-          setError('人机验证失败，请重试');
+          setError(verifyData.message || '人机验证失败，请重试');
           setIsLoading(false);
           return;
         }
@@ -63,8 +63,10 @@ export function LoginModal() {
         if (typeof window.initGeetest4 === 'function' && !captchaInstance.current) {
           window.initGeetest4({
             captchaId: 'E1EC2EDF6ce881db23BCD9DF5D7BB1D',
-            product: 'bind',
+            product: 'popup',
             language: 'zh-cn',
+            protocol: 'https://',
+            timeout: 10000
           }, (instance: any) => {
             captchaInstance.current = instance;
             bindCaptchaEvents(instance);
@@ -103,8 +105,10 @@ export function LoginModal() {
     } else if (typeof window.initGeetest4 === 'function') {
       window.initGeetest4({
         captchaId: 'E1EC2EDF6ce881db23BCD9DF5D7BB1D',
-        product: 'bind',
+        product: 'popup',
         language: 'zh-cn',
+        protocol: 'https://',
+        timeout: 10000
       }, (instance: any) => {
         captchaInstance.current = instance;
         bindCaptchaEvents(instance);
