@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 
-const CAPTCHA_ID = 'E1EC2EDF6ce881db23BCD9DF5D7BB1D';
+const CAPTCHA_ID = 'e1ec2edf6ce881db23bcd9dff5d7bb1d';
 const CAPTCHA_KEY = '6141927eb00592dba3573dfff1137a27';
 
 export async function POST(request: Request) {

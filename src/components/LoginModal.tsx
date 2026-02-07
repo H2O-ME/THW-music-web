@@ -74,7 +74,7 @@ export function LoginModal() {
       const initCaptcha = () => {
         if (typeof window.initGeetest4 === 'function' && !captchaInstance.current) {
           window.initGeetest4({
-            captchaId: 'E1EC2EDF6ce881db23BCD9DF5D7BB1D',
+            captchaId: 'e1ec2edf6ce881db23bcd9dff5d7bb1d',
             product: 'bind', // 使用绑定模式，点击按钮时触发
             language: 'zh-cn',
             riskType: 'slide', // 默认滑块验证
@@ -118,7 +118,7 @@ export function LoginModal() {
         captchaInstance.current.showCaptcha();
       } else if (typeof window.initGeetest4 === 'function') {
         window.initGeetest4({
-          captchaId: 'E1EC2EDF6ce881db23BCD9DF5D7BB1D',
+          captchaId: 'e1ec2edf6ce881db23bcd9dff5d7bb1d',
           product: 'bind',
           language: 'zh-cn',
           riskType: 'slide',
